@@ -1,32 +1,42 @@
-import { useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import Card from "../UI/Card";
 import MealItem from "../Meals/MealItem/MealItem";
 import classes from "./AvailableMeals.module.css";
 
-
-
 const AvailableMeals = () => {
   const [meals, setMeals] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchMeals = async () =>{
-      const response = await fetch('https://foodorderapp-363e7-default-rtdb.firebaseio.com/meals.json');
+    const fetchMeals = async () => {
+      const response = await fetch(
+        "https://foodorderapp-363e7-default-rtdb.firebaseio.com/meals.json"
+      );
       const responseData = await response.json();
 
       const loadedMeals = [];
 
-      for (const key in responseData){
+      for (const key in responseData) {
         loadedMeals.push({
           id: key,
-          name : responseData[key].name,
-          description : responseData[key].description,
-          price : responseData[key].price
+          name: responseData[key].name,
+          description: responseData[key].description,
+          price: responseData[key].price,
         });
       }
       setMeals(loadedMeals);
     };
     fetchMeals();
-  }, [])
+    setIsLoading(false);
+  }, []);
+ 
+  if (isLoading) {
+    return (
+      <section className={classes.MealsLoading}>
+        <p>Loading :)</p>
+      </section>
+    );
+  }
 
   const mealsList = meals.map((meal) => (
     <MealItem
